@@ -11,4 +11,5 @@ public class Constants {
     public static final String password = "B5EbtWQW3wxbc2Shfao1FZq8RU4AeeRzwhar6WCt6dro";
     public static final String basicAuth = "Basic bXVsdGljaGFpbnJwYzpCNUVidFdRVzN3eGJjMlNoZmFvMUZacThSVTRBZWVSendoYXI2V0N0NmRybw==";
     public static final String authHeader = "Authorization";
+    public static final String chainName = "chain1";
 }

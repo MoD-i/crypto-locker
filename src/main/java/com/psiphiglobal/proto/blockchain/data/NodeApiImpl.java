@@ -1,8 +1,8 @@
-package com.psiphiglobal.proto.blockchain.data.api.node;
+package com.psiphiglobal.proto.blockchain.data;
 
+import com.psiphiglobal.proto.blockchain.data.core.JsonRpcRequest;
+import com.psiphiglobal.proto.blockchain.data.core.JsonRpcResponse;
 import com.psiphiglobal.proto.util.GsonProvider;
-import com.psiphiglobal.proto.blockchain.data.api.JsonRpcResponse;
-import com.psiphiglobal.proto.blockchain.data.exceptions.JsonRpcException;
 import com.psiphiglobal.proto.blockchain.data.utils.JsonRpcClient;
 import com.psiphiglobal.proto.blockchain.api.NodeApi;
 import com.psiphiglobal.proto.blockchain.api.model.Node;
@@ -25,14 +25,19 @@ public class NodeApiImpl implements NodeApi{
     @Override
     public Node getInfo() throws JsonRpcException {
 
-        JsonRpcResponse getInfoResponse = jsonRpcClient.sendRequest("getinfo", new ArrayList<>());
-        System.out.println("Response ----- " + getInfoResponse.getJson());
+        JsonRpcResponse getInfoResponse = jsonRpcClient.sendRequest(new JsonRpcRequest("getinfo", new ArrayList<Object>(), generateId()));
         Node node = GsonProvider.get().fromJson(getInfoResponse.getJson(), Node.class);
 
-        JsonRpcResponse getPeerInfoResponse = jsonRpcClient.sendRequest("getpeerinfo", new ArrayList<>());
-        System.out.println("Response ----- " + getPeerInfoResponse.getJson());
+        JsonRpcResponse getPeerInfoResponse = jsonRpcClient.sendRequest(new JsonRpcRequest("getpeerinfo", new ArrayList<>(), generateId()));
         System.out.println(getPeerInfoResponse.getJson());
 
         return node;
     }
+
+    private String generateId()
+    {
+        long id = ((int)(10000 * Math.random())) + System.nanoTime();
+        return String.valueOf(id);
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.psiphiglobal.proto.endpoints;
 
 import com.psiphiglobal.proto._core.StatusCodes;
-import com.psiphiglobal.proto.blockchain.data.exceptions.JsonRpcException;
+import com.psiphiglobal.proto.blockchain.data.JsonRpcException;
 import com.psiphiglobal.proto.blockchain.api.model.Node;
 
 import javax.ws.rs.GET;

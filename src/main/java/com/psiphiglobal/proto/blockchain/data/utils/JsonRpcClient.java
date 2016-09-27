@@ -1,9 +1,9 @@
 package com.psiphiglobal.proto.blockchain.data.utils;
 
-import com.psiphiglobal.proto.blockchain.data.api.JsonRpcRequest;
-import com.psiphiglobal.proto.blockchain.data.api.JsonRpcResponse;
+import com.psiphiglobal.proto.blockchain.data.core.JsonRpcRequest;
+import com.psiphiglobal.proto.blockchain.data.core.JsonRpcResponse;
 import com.psiphiglobal.proto.blockchain.data.constants.Constants;
-import com.psiphiglobal.proto.blockchain.data.exceptions.JsonRpcException;
+import com.psiphiglobal.proto.blockchain.data.JsonRpcException;
 import com.squareup.okhttp.*;
 
 import java.io.IOException;
@@ -39,12 +39,11 @@ public class JsonRpcClient {
     }
 
 
-    public JsonRpcResponse sendRequest(String methodName, ArrayList<Object> params) throws JsonRpcException {
+    public JsonRpcResponse sendRequest(JsonRpcRequest jsonRpcRequest) throws JsonRpcException {
 
         long id = ((int)(10000 * Math.random())) + System.nanoTime();
 
-        RequestBody body = RequestBody.create(JSON, JsonBuilder.buildJson(new JsonRpcRequest(methodName, params, String.valueOf(id))));
-        System.out.println(JsonBuilder.buildJson(new JsonRpcRequest(methodName, params, String.valueOf(id))));
+        RequestBody body = RequestBody.create(JSON, JsonBuilder.buildJson(jsonRpcRequest));
 
         Request request = new Request.Builder()
                 .header(Constants.authHeader, Constants.basicAuth)
@@ -60,10 +59,10 @@ public class JsonRpcClient {
             throw new JsonRpcException("Null Response");
         }
 
-//        if(response.code() != 200)
-//        {
-//            throw new JsonRpcException("Response Code is not 200.");
-//        }
+        if(response.code() != 200)
+        {
+            throw new JsonRpcException("Response Code is not 200.");
+        }
 
         JsonRpcResponse jsonRpcResponse = null;
         try {

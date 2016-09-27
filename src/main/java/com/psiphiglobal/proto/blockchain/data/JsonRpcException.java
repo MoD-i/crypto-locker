@@ -1,4 +1,4 @@
-package com.psiphiglobal.proto.blockchain.data.exceptions;
+package com.psiphiglobal.proto.blockchain.data;
 
 /**
  * Created by harsh on 27/09/16.

@@ -1,6 +1,6 @@
 package com.psiphiglobal.proto.blockchain.api;
 
-import com.psiphiglobal.proto.blockchain.data.api.node.NodeApiImpl;
+import com.psiphiglobal.proto.blockchain.data.NodeApiImpl;
 
 import java.net.MalformedURLException;
 

@@ -1,7 +1,7 @@
 package com.psiphiglobal.proto.blockchain.data.utils;
 
 import com.psiphiglobal.proto.util.GsonProvider;
-import com.psiphiglobal.proto.blockchain.data.api.JsonRpcRequest;
+import com.psiphiglobal.proto.blockchain.data.core.JsonRpcRequest;
 
 /**
  * Created by harsh on 27/09/16.

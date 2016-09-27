@@ -1,4 +1,4 @@
-package com.psiphiglobal.proto.blockchain.data.api;
+package com.psiphiglobal.proto.blockchain.data.core;
 
 /**
  * Created by harsh on 27/09/16.
