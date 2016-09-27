@@ -1,33 +1,37 @@
 package com.psiphiglobal.proto.blockchain.api;
 
-import com.psiphiglobal.proto.blockchain.data.NodeApiImpl;
+import com.psiphiglobal.proto._core.Constants;
+import com.psiphiglobal.proto.blockchain.impl.NodeApiImpl;
+import com.psiphiglobal.proto.blockchain.impl._core.JsonRpcClient;
+import com.psiphiglobal.proto.util.GsonProvider;
 
-import java.net.MalformedURLException;
-
-public class BLockchainApiManager
+public class BlockchainApiManager
 {
-    private static BLockchainApiManager instance;
+    private static BlockchainApiManager instance;
 
-    public static BLockchainApiManager getInstance()
+    public static BlockchainApiManager getInstance()
     {
         if (instance == null)
         {
-            instance = new BLockchainApiManager();
+            instance = new BlockchainApiManager();
         }
 
         return instance;
     }
 
+    /* Blockchain APIs */
     private NodeApi nodeApi;
 
-    private BLockchainApiManager()
+    private BlockchainApiManager()
     {
+        JsonRpcClient.init(GsonProvider.get(), Constants.BLOCKCHAIN_RPC_URL, Constants.BLOCKCHAIN_RPC_USERNAME, Constants.BLOCKCHAIN_RPC_PASSWORD);
     }
 
-    public NodeApi getNodeApi() throws MalformedURLException {
+    public NodeApi getNodeApi()
+    {
         if (nodeApi == null)
         {
-            nodeApi = new NodeApiImpl();
+            nodeApi = new NodeApiImpl(JsonRpcClient.getInstance());
         }
 
         return nodeApi;

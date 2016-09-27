@@ -65,7 +65,7 @@
             <version>${commons-codec.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp -->
+        <!-- OkHttp -->
         <dependency>
             <groupId>com.squareup.okhttp</groupId>
             <artifactId>okhttp</artifactId>

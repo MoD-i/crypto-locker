@@ -1,4 +1,4 @@
-package com.psiphiglobal.proto.blockchain.api.model;
+package com.psiphiglobal.proto.model;
 
 public final class Node
 {
@@ -8,9 +8,8 @@ public final class Node
     private final String description;
     private final String protocol;
     private final int port;
-    private final int peerCount;
 
-    public Node(String version, int protocolVersion, String chainName, String description, String protocol, int port, int peerCount)
+    public Node(String version, int protocolVersion, String chainName, String description, String protocol, int port)
     {
         this.version = version;
         this.protocolVersion = protocolVersion;
@@ -18,7 +17,6 @@ public final class Node
         this.description = description;
         this.protocol = protocol;
         this.port = port;
-        this.peerCount = peerCount;
     }
 
     public String getVersion()
@@ -49,10 +47,5 @@ public final class Node
     public int getPort()
     {
         return port;
-    }
-
-    public int getPeerCount()
-    {
-        return peerCount;
     }
 }
