@@ -1,16 +1,18 @@
 package com.psiphiglobal.proto.blockchain.api;
 
-import com.psiphiglobal.proto.blockchain.api.model.Node;
+import com.psiphiglobal.proto.blockchain.data.api.node.NodeApiImpl;
 
-public class BlockchainApiManager
+import java.net.MalformedURLException;
+
+public class BLockchainApiManager
 {
-    private static BlockchainApiManager instance;
+    private static BLockchainApiManager instance;
 
-    public static BlockchainApiManager getInstance()
+    public static BLockchainApiManager getInstance()
     {
         if (instance == null)
         {
-            instance = new BlockchainApiManager();
+            instance = new BLockchainApiManager();
         }
 
         return instance;
@@ -18,16 +20,14 @@ public class BlockchainApiManager
 
     private NodeApi nodeApi;
 
-    private BlockchainApiManager()
+    private BLockchainApiManager()
     {
     }
 
-    public NodeApi getNodeApi()
-    {
+    public NodeApi getNodeApi() throws MalformedURLException {
         if (nodeApi == null)
         {
-            // TODO : Replace with actual implementation
-            nodeApi = () -> new Node("1.0 alpha 24", 10006, "morty", "Morty: The dumb testnet", "multichain", 7417, 1);
+            nodeApi = new NodeApiImpl();
         }
 
         return nodeApi;

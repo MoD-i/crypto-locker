@@ -61,8 +61,8 @@ public class Server
     public static HttpServer startHttpServer()
     {
         initServerContext();
-        final ProtoApplication clanoutApiServer = new ProtoApplication();
-        final ResourceConfig resourceConfig = ResourceConfig.forApplication(clanoutApiServer);
+        final ProtoApplication protoApiServer = new ProtoApplication();
+        final ResourceConfig resourceConfig = ResourceConfig.forApplication(protoApiServer);
         return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, resourceConfig, false);
     }
 
