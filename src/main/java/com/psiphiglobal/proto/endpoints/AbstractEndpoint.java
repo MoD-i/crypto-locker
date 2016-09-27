@@ -1,6 +1,7 @@
 package com.psiphiglobal.proto.endpoints;
 
 import com.psiphiglobal.proto._core.ServerContext;
+import com.psiphiglobal.proto.blockchain.api.BlockchainApiManager;
 import com.psiphiglobal.proto.util.GsonProvider;
 
 import javax.ws.rs.core.MediaType;
@@ -12,10 +13,12 @@ import java.util.concurrent.ExecutorService;
 public class AbstractEndpoint
 {
     protected ExecutorService workerPool;
+    protected BlockchainApiManager blockchainApiManager;
 
     public AbstractEndpoint()
     {
         workerPool = ServerContext.getInstance().getWorkerPool();
+        blockchainApiManager = BlockchainApiManager.getInstance();
     }
 
     protected Response buildSuccessJsonResponse(Object o)
