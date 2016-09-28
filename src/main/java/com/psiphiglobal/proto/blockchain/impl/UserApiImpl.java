@@ -5,9 +5,12 @@ import com.psiphiglobal.proto.blockchain.api.UserApi;
 import com.psiphiglobal.proto.blockchain.impl._core.JsonRpcClient;
 import com.psiphiglobal.proto.blockchain.impl._core.JsonRpcException;
 import com.psiphiglobal.proto.blockchain.impl.request.PublishToStreamRequest;
+import com.psiphiglobal.proto.blockchain.impl.request.RetrieveFromStreamRequest;
 import com.psiphiglobal.proto.blockchain.impl.response.PublishToStreamResponse;
+import com.psiphiglobal.proto.blockchain.impl.response.RetrieveFromStreamResponse;
 import com.psiphiglobal.proto.model.User;
 import com.psiphiglobal.proto.util.GsonProvider;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 
 import java.util.ArrayList;
@@ -28,6 +31,13 @@ public class UserApiImpl implements UserApi {
     @Override
     public boolean registerUser(User user) {
 
+        boolean usernameAlreadyExist = checkIfUsernameAlreadyExists(user.getUsername());
+
+        if(usernameAlreadyExist)
+        {
+            return false;
+        }
+
         List<Object> params = new ArrayList<>();
         params.add(Constants.USER_STREAM_NAME);
         params.add(user.getUsername());
@@ -44,9 +54,26 @@ public class UserApiImpl implements UserApi {
     }
 
     @Override
-    public User getUser(String username) {
+    public User getUser(String username){
 
-        return null;
+        List<Object> params = new ArrayList<>();
+        params.add(Constants.USER_STREAM_NAME);
+        params.add(username);
+
+        try {
+            RetrieveFromStreamResponse retrieveFromStreamResponse = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest(params)));
+
+            if(retrieveFromStreamResponse.getResults().size() == 0)
+            {
+                return null;
+            }
+
+            return convertHexToUser(retrieveFromStreamResponse.getResult(0).getData());
+
+        } catch (JsonRpcException e) {
+
+            return null;
+        }
     }
 
     private String convertToHex(User user)
@@ -55,4 +82,40 @@ public class UserApiImpl implements UserApi {
         String userJsonHex = Hex.encodeHexString(userJson.getBytes());
         return userJsonHex;
     }
+
+    private static User convertHexToUser(String jsonHex)
+    {
+        String json = null;
+        try {
+            json = new String(Hex.decodeHex(jsonHex.toCharArray()));
+        } catch (DecoderException e) {
+
+            return null;
+        }
+        return GsonProvider.get().fromJson(json, User.class);
+    }
+
+    private boolean checkIfUsernameAlreadyExists(String username) {
+
+        List<Object> params = new ArrayList<>();
+        params.add(Constants.USER_STREAM_NAME);
+        params.add(username);
+
+        try {
+            RetrieveFromStreamResponse retrieveFromStreamResponse = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest(params)));
+
+            if(retrieveFromStreamResponse.getResults().size() == 0)
+            {
+                return false;
+            }else{
+
+                return true;
+            }
+
+        } catch (JsonRpcException e) {
+
+            return true;
+        }
+    }
+
 }
