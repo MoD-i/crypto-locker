@@ -28,6 +28,12 @@ public class UserEndpoint extends AbstractEndpoint
     {
         workerPool.execute(() -> {
 
+            if (username == null || username.isEmpty())
+            {
+                asyncResponse.resume(Response.status(Response.Status.BAD_REQUEST).build());
+                return;
+            }
+
             User user = blockchainApiManager.getUserApi().get(username);
             if (user != null)
             {

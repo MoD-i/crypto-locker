@@ -1,6 +1,7 @@
 package com.psiphiglobal.proto._core;
 
 
+import com.psiphiglobal.proto.endpoints.DocumentEndpoint;
 import com.psiphiglobal.proto.endpoints.HealthEndpoint;
 import com.psiphiglobal.proto.endpoints.UserEndpoint;
 import com.psiphiglobal.proto.logging.RequestLogger;
@@ -30,6 +31,7 @@ public class ProtoApplication extends Application
         /* Endpoints */
         resources.add(HealthEndpoint.class);
         resources.add(UserEndpoint.class);
+        resources.add(DocumentEndpoint.class);
 
         /* Error Handler */
         resources.add(DefaultExceptionHandler.class);
