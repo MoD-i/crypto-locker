@@ -43,9 +43,19 @@ public final class DocumentHelper
         return GsonProvider.get().toJson(document);
     }
 
-    public static Document deserialize(String serializedDocument)
+    public static String serialize(DocumentSummary documentSummary)
+    {
+        return GsonProvider.get().toJson(documentSummary);
+    }
+
+    public static Document deserializeDocument(String serializedDocument)
     {
         return GsonProvider.get().fromJson(serializedDocument, Document.class);
+    }
+
+    public static DocumentSummary deserializeDocumentSummary(String serializedDocumentSummary)
+    {
+        return GsonProvider.get().fromJson(serializedDocumentSummary, DocumentSummary.class);
     }
 
     public static DocumentSummary summarize(Document document)

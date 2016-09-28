@@ -30,20 +30,6 @@ public final class UserHelper
         return AsymmetricCryptoUtil.verifySign(publicKey, signature, rawBytes);
     }
 
-    public static void main(String[] args) throws Exception
-    {
-        KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        PublicKey publicKey = keyPair.getPublic();
-        PrivateKey privateKey = keyPair.getPrivate();
-        System.out.println("Public Key: " + Base64.encodeBase64String(publicKey.getEncoded()));
-        System.out.println("Private Key: " + Base64.encodeBase64String(privateKey.getEncoded()));
-
-        String raw = "aditya|Aditya Prasad|aytida77@gmail.com";
-        byte[] signature = AsymmetricCryptoUtil.sign(privateKey.getEncoded(), raw.getBytes());
-        String sign = Base64.encodeBase64String(signature);
-        System.out.println(sign);
-    }
-
     public static String serialize(User user)
     {
         return GsonProvider.get().toJson(user);
