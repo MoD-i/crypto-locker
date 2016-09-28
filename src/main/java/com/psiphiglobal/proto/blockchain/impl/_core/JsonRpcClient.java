@@ -81,7 +81,7 @@ public class JsonRpcClient
 
         try
         {
-            String responseBody = response.body().string();
+            String responseBody = response.body().string().replace("\n", "").replace("\r", "").trim();
             LOG.info("[BLOCKCHAIN RESPONSE] >>>> " + responseBody);
             return responseBody;
         }
