@@ -75,7 +75,7 @@ public class JsonRpcClient
 
         if (response.code() != 200)
         {
-            LOG.error("[BLOCKCHAIN RESPONSE] >>>> JSON-RPC call error : response code is not 200");
+            LOG.error("[BLOCKCHAIN RESPONSE] >>>> JSON-RPC call error : response code is not 200, rather it is " + response.code());
             throw new JsonRpcException("JSON-RPC call error : response code is not 200");
         }
 
@@ -94,6 +94,6 @@ public class JsonRpcClient
 
     private static String getAuthorizationHeader(String username, String password)
     {
-        return "Basic bXVsdGljaGFpbnJwYzpCNUVidFdRVzN3eGJjMlNoZmFvMUZacThSVTRBZWVSendoYXI2V0N0NmRybw==";
+        return "Basic bXVsdGljaGFpbnJwYzpCSnlkVXhwOGdXdjFmdnpnbXBhRjNHMnFXOWVBWm5NaXJ5a25hazhFOW5Wag==";
     }
 }

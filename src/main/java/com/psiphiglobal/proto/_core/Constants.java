@@ -10,9 +10,15 @@ public final class Constants
     public static final int PORT = 7070;
 
     /* Blockchain Node */
-    public static final String BLOCKCHAIN_RPC_URL = "http://54.71.73.157:7350/";
+    public static final String BLOCKCHAIN_RPC_URL = "http://54.71.117.175:2880/";
     public static final String BLOCKCHAIN_RPC_USERNAME = "multichainrpc";
-    public static final String BLOCKCHAIN_RPC_PASSWORD = "B5EbtWQW3wxbc2Shfao1FZq8RU4AeeRzwhar6WCt6dro";
+    public static final String BLOCKCHAIN_RPC_PASSWORD = "BJydUxp8gWv1fvzgmpaF3G2qW9eAZnMiryknak8E9nVj";
+
+    /* Chain */
+    public static final String CHAIN_NAME = "testchain";
+
+    /* Streams */
+    public static final String USER_STREAM_NAME = "userstream";
 
     private Constants()
     {
