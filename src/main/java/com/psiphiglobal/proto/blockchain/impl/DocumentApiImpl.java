@@ -18,36 +18,36 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by harsh on 28/09/16.
- */
-public class DocumentApiImpl implements DocumentApi {
-
+public class DocumentApiImpl implements DocumentApi
+{
     private static Logger LOG = LogManager.getLogger();
     private JsonRpcClient jsonRpcClient;
 
     public static final String STREAM_DOCUMENT = "documents";
     public static final String STREAM_USER_DOCUMENTS = "user_documents";
 
-    public DocumentApiImpl(JsonRpcClient jsonRpcClient) {
+    public DocumentApiImpl(JsonRpcClient jsonRpcClient)
+    {
         this.jsonRpcClient = jsonRpcClient;
     }
 
     @Override
-    public void create(Document document) {
-
-        try {
+    public void create(Document document)
+    {
+        try
+        {
             PublishToStreamResponse publishToStreamResponse = PublishToStreamResponse.parse(jsonRpcClient.sendRequest(new PublishToStreamRequest(STREAM_DOCUMENT, document.getId(), DocumentHelper.serialize(document))));
             LOG.info("[CREATE DOCUMENT] Transaction ID: " + publishToStreamResponse.getTransactionId());
 
-            DocumentSummary documentSummary = getDocumentSummary(document);
+            DocumentSummary documentSummary = DocumentHelper.summarize(document);
             PublishToStreamResponse response = PublishToStreamResponse.parse(jsonRpcClient.sendRequest(new PublishToStreamRequest(STREAM_USER_DOCUMENTS, document.getCreator(), DocumentHelper.serialize(documentSummary))));
             LOG.info("[CREATE DOCUMENT SUMMARY] Transaction ID: " + response.getTransactionId());
-
-        } catch (JsonRpcException e) {
-
+        }
+        catch (JsonRpcException e)
+        {
             throw new UnknownException();
-        }catch (Exception e)
+        }
+        catch (Exception e)
         {
             LOG.error("Unable to create document", e);
             throw new UnknownException();
@@ -55,8 +55,8 @@ public class DocumentApiImpl implements DocumentApi {
     }
 
     @Override
-    public Document get(String id) {
-
+    public Document get(String id)
+    {
         try
         {
             RetrieveFromStreamResponse response = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest(STREAM_DOCUMENT, id)));
@@ -65,11 +65,10 @@ public class DocumentApiImpl implements DocumentApi {
                 return null;
             }
             return DocumentHelper.deserializeDocument(response.getResult(0).getData());
-
         }
         catch (JsonRpcException e)
         {
-            return null;
+            throw new UnknownException();
         }
         catch (Exception e)
         {
@@ -79,14 +78,14 @@ public class DocumentApiImpl implements DocumentApi {
     }
 
     @Override
-    public List<DocumentSummary> getAll(String username) {
-
+    public List<DocumentSummary> getAll(String username)
+    {
         try
         {
             RetrieveFromStreamResponse response = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest(STREAM_USER_DOCUMENTS, username)));
 
             List<DocumentSummary> documentSummaryList = new ArrayList<>();
-            for(RetrieveFromStreamResponse.Result result: response.getResults())
+            for (RetrieveFromStreamResponse.Result result : response.getResults())
             {
                 documentSummaryList.add(DocumentHelper.deserializeDocumentSummary(result.getData()));
             }
@@ -95,23 +94,12 @@ public class DocumentApiImpl implements DocumentApi {
         }
         catch (JsonRpcException e)
         {
-            return null;
+            throw new UnknownException();
         }
         catch (Exception e)
         {
             LOG.error("Unable to fetch document summaries", e);
             throw new UnknownException();
         }
-    }
-
-    private DocumentSummary getDocumentSummary(Document document) {
-
-        DocumentSummary documentSummary = new DocumentSummary();
-        documentSummary.setCreatedAt(document.getCreatedAt());
-        documentSummary.setEncryptedKey(document.getEncryptedKey());
-        documentSummary.setId(document.getId());
-        documentSummary.setName(document.getName());
-
-        return documentSummary;
     }
 }

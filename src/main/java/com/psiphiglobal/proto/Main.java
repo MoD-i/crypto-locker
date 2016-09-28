@@ -1,75 +1,38 @@
 package com.psiphiglobal.proto;
 
-import com.psiphiglobal.proto._core.Constants;
-import com.psiphiglobal.proto.blockchain.impl._core.JsonRpcClient;
-import com.psiphiglobal.proto.blockchain.impl._core.JsonRpcException;
-import com.psiphiglobal.proto.blockchain.impl.request.PublishToStreamRequest;
-import com.psiphiglobal.proto.blockchain.impl.request.RetrieveFromStreamRequest;
-import com.psiphiglobal.proto.blockchain.impl.response.PublishToStreamResponse;
-import com.psiphiglobal.proto.blockchain.impl.response.RetrieveFromStreamResponse;
-import com.psiphiglobal.proto.exception.UnknownException;
-import com.psiphiglobal.proto.model.Document;
-import com.psiphiglobal.proto.model.DocumentSummary;
-import com.psiphiglobal.proto.model.helper.DocumentHelper;
-import com.psiphiglobal.proto.util.GsonProvider;
+import com.psiphiglobal.proto.util.crypto.AsymmetricCryptoUtil;
+import com.psiphiglobal.proto.util.crypto.SymmetricCryptoUtil;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
 
-/**
- * Created by harsh on 28/09/16.
- */
-public class Main {
+public class Main
+{
+    public static void main(String[] args) throws Exception
+    {
+        File file = new File("/Users/aditya/bitcoin.pdf");
+        byte[] contents = IOUtils.toByteArray(new FileInputStream(file));
+        System.out.println("File Size : " + contents.length);
 
-    public static void main(String[] args) {
+        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCLDR0TMvdO6etP34OvpoweA3NWSb/h067A9Gqby248oWaUNeyeYpHDtBpZ6V6bUFvcFfJDqpMil6z0o09Cl8H0sbG34GCxKLyYGQfd0E7fWgGIKzOeAS9pOu6o+9JZqtWwT0GppVHxq81VqZdcmYFmEXVGH8vh5kA+UhFJ9AE3BwIDAQAB";
+        String privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIsNHRMy907p60/fg6+mjB4Dc1ZJv+HTrsD0apvLbjyhZpQ17J5ikcO0GlnpXptQW9wV8kOqkyKXrPSjT0KXwfSxsbfgYLEovJgZB93QTt9aAYgrM54BL2k67qj70lmq1bBPQamlUfGrzVWpl1yZgWYRdUYfy+HmQD5SEUn0ATcHAgMBAAECgYB3RK88qYmQ6XmJ0Cjuv8cNc145lBZ+yAfrv3m12f7bCIGo/LvRerCWkWPM3Svlwj6Yf0aGnceIc1rJl05Dy1Fzla7ji/xYizRUN3q3Pb4IPLIeF7FPMC8EXuMQ4eyF6SL4eplPzq05cAFaHlllLbldJF+s7ws2sFO9ev8OqBdVcQJBAPlDGUtIl2TvxWXhWhDZUikf7SJxyEZMgXfvZiIGru43cD088U/9TWs9ikYaMfsuB1S3McXLhx/XehGpt7fZKm8CQQCOz1opfX2pReMzQNMyXf5EHun4relE+saCEAtIFvJzrPK4iSbQ5aX9pi+8NIRXyghQsCNSe1y7GEq3o0Nz6+jpAkAbwNXTJQz+RxgihNnjYF8ehxh/Kk4TTbdopDYp+baGfZO4rc1si5aQJzT7IzWHcxOL4i3fiQ7Ng89qogv7o2lvAkBqWhUFLQV2GCvZMX+W1NTUmkkX/zvnOPK4TYZ5S02Hw9aGgu07SKrTOP33pQyh7D1BCctkU6Z9Vtvd4mILZDZxAkEAmfHnHgLLmP94gCOxot4Il8bPzpoHdoQqiK4D69m6d9B/G6unpLVACBpEDRsQDBD2djDQLEBBKHdkQHUn8q19gw==";
+        String key = "secret";
+        byte[] encryptedKey = AsymmetricCryptoUtil.encryptWithPublicKey(Base64.decodeBase64(publicKey), key.getBytes());
+        System.out.println("Encrypted Key\n" + Base64.encodeBase64String(encryptedKey));
+        byte[] dec = AsymmetricCryptoUtil.decryptWithPrivateKey(Base64.decodeBase64(privateKey), encryptedKey);
+        System.out.println(new String(dec));
 
-        JsonRpcClient.init(GsonProvider.get(), Constants.BLOCKCHAIN_RPC_URL, Constants.BLOCKCHAIN_RPC_USERNAME, Constants.BLOCKCHAIN_RPC_PASSWORD);
-        JsonRpcClient jsonRpcClient = JsonRpcClient.getInstance();
+        String name = "bitcoin.pdf";
+        String creator = "aditya";
+        String encryptedContents = Base64.encodeBase64String(SymmetricCryptoUtil.encrypt(key, contents));
+        System.out.println("\nEncrypted Content\n" + encryptedContents);
+        System.out.println("Encrypted COntent Size: " + encryptedContents.length());
 
-        Document document = new Document();
-        document.setCreatedAt(System.currentTimeMillis());
-        document.setCreator("ABC");
-        document.setEncryptedContent("This is encrypted. Do not open or close");
-        document.setEncryptedKey("Key");
-        document.setId("ID");
-        document.setName("Doc Name");
-        document.setSignature("Signature");
-
-
-        try
-        {
-            RetrieveFromStreamResponse response = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest("user_documents", "ABC")));
-
-            System.out.println(response.getResults().size());
-            System.out.println(GsonProvider.get().toJson(response.getResults().get(1)));
-
-            List<DocumentSummary> documentSummaryList = new ArrayList<>();
-            for(RetrieveFromStreamResponse.Result result: response.getResults())
-            {
-                documentSummaryList.add(DocumentHelper.deserializeDocumentSummary(result.getData()));
-            }
-
-            System.out.println(documentSummaryList.size());
-        }
-        catch (JsonRpcException e)
-        {
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            throw new UnknownException();
-        }
-    }
-
-    private static DocumentSummary getDocumentSummary(Document document) {
-
-        DocumentSummary documentSummary = new DocumentSummary();
-        documentSummary.setCreatedAt(document.getCreatedAt());
-        documentSummary.setEncryptedKey(document.getEncryptedKey());
-        documentSummary.setId(document.getId());
-        documentSummary.setName(document.getName());
-
-        return documentSummary;
+        String raw = name + "|" + creator + "|" + encryptedContents;
+        byte[] rawBytes = raw.getBytes();
+        byte[] signature = AsymmetricCryptoUtil.sign(Base64.decodeBase64(privateKey), rawBytes);
+        System.out.println("\nSignature\n" + Base64.encodeBase64String(signature));
     }
 }

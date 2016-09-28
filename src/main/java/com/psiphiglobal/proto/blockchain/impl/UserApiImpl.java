@@ -79,7 +79,7 @@ public class UserApiImpl implements UserApi
         }
         catch (JsonRpcException e)
         {
-            return null;
+            throw new UnknownException();
         }
         catch (Exception e)
         {

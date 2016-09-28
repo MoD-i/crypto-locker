@@ -37,7 +37,7 @@ public class DocumentEndpoint extends AbstractEndpoint
                 return;
             }
 
-            Document document = null;
+            Document document = blockchainApiManager.getDocumentApi().get(documentId);
             if (document != null)
             {
                 asyncResponse.resume(buildSuccessJsonResponse(document));
@@ -63,7 +63,7 @@ public class DocumentEndpoint extends AbstractEndpoint
                 return;
             }
 
-            List<DocumentSummary> documents = null;
+            List<DocumentSummary> documents = blockchainApiManager.getDocumentApi().getAll(username);
             asyncResponse.resume(buildSuccessJsonResponse(documents));
 
         });
@@ -102,7 +102,7 @@ public class DocumentEndpoint extends AbstractEndpoint
             document.setSignature(input.get("signature"));
 
             UserApi userApi = blockchainApiManager.getUserApi();
-            DocumentApi documentApi = null;
+            DocumentApi documentApi = blockchainApiManager.getDocumentApi();
 
             if (!DocumentHelper.validate(document))
             {
