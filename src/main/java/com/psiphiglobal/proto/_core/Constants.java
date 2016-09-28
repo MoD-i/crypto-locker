@@ -17,9 +17,6 @@ public final class Constants
     /* Chain */
     public static final String CHAIN_NAME = "testchain";
 
-    /* Streams */
-    public static final String USER_STREAM_NAME = "userstream";
-
     private Constants()
     {
     }

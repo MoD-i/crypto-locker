@@ -2,12 +2,11 @@ package com.psiphiglobal.proto.blockchain.api;
 
 import com.psiphiglobal.proto.model.User;
 
-/**
- * Created by harsh on 28/09/16.
- */
-public interface UserApi {
+public interface UserApi
+{
+    boolean userExists(String username);
 
-    boolean registerUser(User user);
+    void create(User user);
 
-    User getUser(String username);
+    User get(String username);
 }

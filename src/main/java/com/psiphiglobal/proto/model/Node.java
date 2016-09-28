@@ -2,26 +2,21 @@ package com.psiphiglobal.proto.model;
 
 public final class Node
 {
-    private final String version;
-    private final int protocolVersion;
-    private final String chainName;
-    private final String description;
-    private final String protocol;
-    private final int port;
-
-    public Node(String version, int protocolVersion, String chainName, String description, String protocol, int port)
-    {
-        this.version = version;
-        this.protocolVersion = protocolVersion;
-        this.chainName = chainName;
-        this.description = description;
-        this.protocol = protocol;
-        this.port = port;
-    }
+    private String version;
+    private int protocolVersion;
+    private String chainName;
+    private String description;
+    private String protocol;
+    private int port;
 
     public String getVersion()
     {
         return version;
+    }
+
+    public void setVersion(String version)
+    {
+        this.version = version;
     }
 
     public int getProtocolVersion()
@@ -29,9 +24,19 @@ public final class Node
         return protocolVersion;
     }
 
+    public void setProtocolVersion(int protocolVersion)
+    {
+        this.protocolVersion = protocolVersion;
+    }
+
     public String getChainName()
     {
         return chainName;
+    }
+
+    public void setChainName(String chainName)
+    {
+        this.chainName = chainName;
     }
 
     public String getDescription()
@@ -39,13 +44,28 @@ public final class Node
         return description;
     }
 
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
     public String getProtocol()
     {
         return protocol;
     }
 
+    public void setProtocol(String protocol)
+    {
+        this.protocol = protocol;
+    }
+
     public int getPort()
     {
         return port;
+    }
+
+    public void setPort(int port)
+    {
+        this.port = port;
     }
 }

@@ -1,6 +1,5 @@
 package com.psiphiglobal.proto.blockchain.impl;
 
-import com.psiphiglobal.proto._core.Constants;
 import com.psiphiglobal.proto.blockchain.api.UserApi;
 import com.psiphiglobal.proto.blockchain.impl._core.JsonRpcClient;
 import com.psiphiglobal.proto.blockchain.impl._core.JsonRpcException;
@@ -8,18 +7,17 @@ import com.psiphiglobal.proto.blockchain.impl.request.PublishToStreamRequest;
 import com.psiphiglobal.proto.blockchain.impl.request.RetrieveFromStreamRequest;
 import com.psiphiglobal.proto.blockchain.impl.response.PublishToStreamResponse;
 import com.psiphiglobal.proto.blockchain.impl.response.RetrieveFromStreamResponse;
+import com.psiphiglobal.proto.exception.UnknownException;
 import com.psiphiglobal.proto.model.User;
-import com.psiphiglobal.proto.util.GsonProvider;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
+import com.psiphiglobal.proto.model.helper.UserHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
+public class UserApiImpl implements UserApi
+{
+    private static Logger LOG = LogManager.getLogger();
 
-/**
- * Created by harsh on 28/09/16.
- */
-public class UserApiImpl implements UserApi {
+    public static final String STREAM_USERS = "users";
 
     private JsonRpcClient jsonRpcClient;
 
@@ -29,93 +27,64 @@ public class UserApiImpl implements UserApi {
     }
 
     @Override
-    public boolean registerUser(User user) {
-
-        boolean usernameAlreadyExist = checkIfUsernameAlreadyExists(user.getUsername());
-
-        if(usernameAlreadyExist)
+    public boolean userExists(String username)
+    {
+        try
         {
-            return false;
+            RetrieveFromStreamResponse response = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest(STREAM_USERS, username)));
+            return response.getResults().size() != 0;
         }
-
-        List<Object> params = new ArrayList<>();
-        params.add(Constants.USER_STREAM_NAME);
-        params.add(user.getUsername());
-        params.add(convertToHex(user));
-
-        try {
-            PublishToStreamResponse publishToStreamResponse = PublishToStreamResponse.parse(jsonRpcClient.sendRequest(new PublishToStreamRequest(params)));
-            System.out.println("Transaction ID ---- " + publishToStreamResponse.getTransactionId());
-            return true; // TODO : What to return? Transaction ID?
-        } catch (JsonRpcException e) {
-
-            return false;
+        catch (JsonRpcException e)
+        {
+            throw new UnknownException();
+        }
+        catch (Exception e)
+        {
+            LOG.error("Unable to check if user exists", e);
+            throw new UnknownException();
         }
     }
 
     @Override
-    public User getUser(String username){
+    public void create(User user)
+    {
+        try
+        {
+            PublishToStreamResponse response = PublishToStreamResponse.parse(jsonRpcClient.sendRequest(new PublishToStreamRequest(STREAM_USERS, user.getUsername(), UserHelper.serialize(user))));
+            LOG.info("[CREATE USER] Transaction ID: " + response.getTransactionId());
+        }
+        catch (JsonRpcException e)
+        {
+            throw new UnknownException();
+        }
+        catch (Exception e)
+        {
+            LOG.error("Unable to create user", e);
+            throw new UnknownException();
+        }
+    }
 
-        List<Object> params = new ArrayList<>();
-        params.add(Constants.USER_STREAM_NAME);
-        params.add(username);
-
-        try {
-            RetrieveFromStreamResponse retrieveFromStreamResponse = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest(params)));
-
-            if(retrieveFromStreamResponse.getResults().size() == 0)
+    @Override
+    public User get(String username)
+    {
+        try
+        {
+            RetrieveFromStreamResponse response = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest(STREAM_USERS, username)));
+            if (response.getResults().size() == 0)
             {
                 return null;
             }
+            return UserHelper.deserialize(response.getResult(0).getData());
 
-            return convertHexToUser(retrieveFromStreamResponse.getResult(0).getData());
-
-        } catch (JsonRpcException e) {
-
+        }
+        catch (JsonRpcException e)
+        {
             return null;
         }
-    }
-
-    private String convertToHex(User user)
-    {
-        String userJson = GsonProvider.get().toJson(user);
-        String userJsonHex = Hex.encodeHexString(userJson.getBytes());
-        return userJsonHex;
-    }
-
-    private static User convertHexToUser(String jsonHex)
-    {
-        String json = null;
-        try {
-            json = new String(Hex.decodeHex(jsonHex.toCharArray()));
-        } catch (DecoderException e) {
-
-            return null;
-        }
-        return GsonProvider.get().fromJson(json, User.class);
-    }
-
-    private boolean checkIfUsernameAlreadyExists(String username) {
-
-        List<Object> params = new ArrayList<>();
-        params.add(Constants.USER_STREAM_NAME);
-        params.add(username);
-
-        try {
-            RetrieveFromStreamResponse retrieveFromStreamResponse = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest(params)));
-
-            if(retrieveFromStreamResponse.getResults().size() == 0)
-            {
-                return false;
-            }else{
-
-                return true;
-            }
-
-        } catch (JsonRpcException e) {
-
-            return true;
+        catch (Exception e)
+        {
+            LOG.error("Unable to fetch user", e);
+            throw new UnknownException();
         }
     }
-
 }

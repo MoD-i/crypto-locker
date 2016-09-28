@@ -1,16 +1,21 @@
 package com.psiphiglobal.proto.blockchain.impl.request;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.codec.binary.Hex;
 
-/**
- * Created by harsh on 28/09/16.
- */
-public class PublishToStreamRequest extends JsonRpcRequest {
-
+public class PublishToStreamRequest extends JsonRpcRequest
+{
     private static final String METHOD_NAME = "publish";
 
-    public PublishToStreamRequest(List<Object> params) {
-        super(METHOD_NAME, params);
+    public PublishToStreamRequest(String streamName, String key, String value)
+    {
+        super(METHOD_NAME);
+        params.add(streamName);
+        params.add(key);
+        params.add(toHexString(value));
+    }
+
+    private static String toHexString(String s)
+    {
+        return Hex.encodeHexString(s.getBytes());
     }
 }

@@ -63,7 +63,7 @@ public final class AsymmetricCryptoUtil
         }
     }
 
-    public static boolean verifySign(byte[] publicKey, byte[] sign, byte[] message) throws CryptoException
+    public static boolean verifySign(byte[] publicKey, byte[] sign, byte[] message)
     {
         try
         {

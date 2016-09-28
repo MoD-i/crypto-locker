@@ -2,19 +2,19 @@ package com.psiphiglobal.proto.blockchain.impl.response;
 
 import com.google.gson.annotations.SerializedName;
 import com.psiphiglobal.proto.util.GsonProvider;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by harsh on 28/09/16.
- */
-public class RetrieveFromStreamResponse {
-
+public class RetrieveFromStreamResponse
+{
     @SerializedName("result")
     private ArrayList<Result> result;
 
-    public List<Result> getResults() {
+    public List<Result> getResults()
+    {
         return result;
     }
 
@@ -34,15 +34,25 @@ public class RetrieveFromStreamResponse {
         @SerializedName("publishers")
         private ArrayList<String> publishers;
 
-        public String getKey() {
+        public String getKey()
+        {
             return key;
         }
 
-        public String getData() {
-            return data;
+        public String getData()
+        {
+            try
+            {
+                return new String(Hex.decodeHex(data.toCharArray()));
+            }
+            catch (DecoderException e)
+            {
+                return null;
+            }
         }
 
-        public ArrayList<String> getPublishers() {
+        public ArrayList<String> getPublishers()
+        {
             return publishers;
         }
     }
@@ -51,6 +61,4 @@ public class RetrieveFromStreamResponse {
     {
         return GsonProvider.get().fromJson(responseJson, RetrieveFromStreamResponse.class);
     }
-
-
 }
