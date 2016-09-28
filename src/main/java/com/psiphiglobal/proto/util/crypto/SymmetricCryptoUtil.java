@@ -1,6 +1,6 @@
 package com.psiphiglobal.proto.util.crypto;
 
-import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -16,7 +16,7 @@ public final class SymmetricCryptoUtil
     private static final int KEY_LEN = 16;
     private static final int IV_LEN = 16;
 
-    public static String encrypt(String secret, byte[] message) throws CryptoException
+    public static byte[] encrypt(String secret, byte[] message) throws CryptoException
     {
         try
         {
@@ -24,8 +24,7 @@ public final class SymmetricCryptoUtil
             SecretKeySpec skeySpec = new SecretKeySpec(getKey(secret), KEY_SPEC);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
-            byte[] encrypted = cipher.doFinal(message);
-            return Hex.encodeHexString(encrypted);
+            return cipher.doFinal(message);
         }
         catch (Exception e)
         {
@@ -33,7 +32,7 @@ public final class SymmetricCryptoUtil
         }
     }
 
-    public static byte[] decrypt(String secret, String encrypted) throws CryptoException
+    public static byte[] decrypt(String secret, byte[] encrypted) throws CryptoException
     {
         try
         {
@@ -41,7 +40,7 @@ public final class SymmetricCryptoUtil
             SecretKeySpec skeySpec = new SecretKeySpec(getKey(secret), KEY_SPEC);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-            return cipher.doFinal(Hex.decodeHex(encrypted.toCharArray()));
+            return cipher.doFinal(encrypted);
         }
         catch (Exception e)
         {
@@ -51,12 +50,12 @@ public final class SymmetricCryptoUtil
 
     private static byte[] getKey(String secret) throws UnsupportedEncodingException
     {
-        return Arrays.copyOf(HashUtil.hash(secret).getBytes(CHARSET), KEY_LEN);
+        return Arrays.copyOf(DigestUtils.sha256Hex(secret).getBytes(CHARSET), KEY_LEN);
     }
 
     private static byte[] getIv(String secret) throws UnsupportedEncodingException
     {
-        return Arrays.copyOfRange(HashUtil.hash(secret).getBytes(CHARSET), KEY_LEN, (KEY_LEN + IV_LEN));
+        return Arrays.copyOfRange(DigestUtils.sha256Hex(secret).getBytes(CHARSET), KEY_LEN, (KEY_LEN + IV_LEN));
     }
 
     private SymmetricCryptoUtil()
