@@ -16,6 +16,7 @@ public final class Constants
 
     /* Chain */
     public static final String CHAIN_NAME = "testchain";
+    public static final long DOCUMENT_SIZE_LIMIT = 3 * 1024 * 1024; // in bytes
 
     private Constants()
     {

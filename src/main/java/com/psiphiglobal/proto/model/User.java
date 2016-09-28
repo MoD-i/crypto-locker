@@ -3,7 +3,7 @@ package com.psiphiglobal.proto.model;
 import java.util.HashMap;
 import java.util.Map;
 
-public class User
+public final class User
 {
     private String username;
     private String name;
