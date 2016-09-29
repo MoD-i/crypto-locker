@@ -121,7 +121,7 @@ public class UserEndpoint extends AbstractEndpoint
 
             user.setCreatedAt(Instant.now().getEpochSecond());
             userApi.create(user);
-            asyncResponse.resume(buildSuccessJsonResponse(user));
+            asyncResponse.resume(buildEmptySuccessResponse());
         });
     }
 }

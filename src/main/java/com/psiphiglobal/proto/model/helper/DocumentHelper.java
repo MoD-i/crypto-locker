@@ -33,6 +33,15 @@ public final class DocumentHelper
         return AsymmetricCryptoUtil.verifySign(publicKey, signature, rawBytes);
     }
 
+    public static boolean validateShareSignature(User from, String to, DocumentSummary shared, String signature)
+    {
+        String raw = to + "|" + shared.getId() + "|" + shared.getEncryptedKey();
+        byte[] rawBytes = raw.getBytes();
+        byte[] sign = Base64.decodeBase64(signature);
+        byte[] publicKey = Base64.decodeBase64(from.getPublicKey());
+        return AsymmetricCryptoUtil.verifySign(publicKey, sign, rawBytes);
+    }
+
     public static boolean isSizeOk(Document document)
     {
         return document.getEncryptedContent().length() < Constants.DOCUMENT_SIZE_LIMIT;

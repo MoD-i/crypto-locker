@@ -2,6 +2,7 @@ package com.psiphiglobal.proto.endpoints;
 
 import com.google.gson.reflect.TypeToken;
 import com.psiphiglobal.proto.blockchain.api.DocumentApi;
+import com.psiphiglobal.proto.blockchain.api.ShareApi;
 import com.psiphiglobal.proto.blockchain.api.UserApi;
 import com.psiphiglobal.proto.model.Document;
 import com.psiphiglobal.proto.model.DocumentSummary;
@@ -46,7 +47,6 @@ public class DocumentEndpoint extends AbstractEndpoint
             {
                 asyncResponse.resume(Response.status(Response.Status.NOT_FOUND).build());
             }
-
         });
     }
 
@@ -65,7 +65,25 @@ public class DocumentEndpoint extends AbstractEndpoint
 
             List<DocumentSummary> documents = blockchainApiManager.getDocumentApi().getAll(username);
             asyncResponse.resume(buildSuccessJsonResponse(documents));
+        });
+    }
 
+    @GET
+    @Path("shared/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void getDocumentsSharedWith(@PathParam("username") String username, @Suspended AsyncResponse asyncResponse)
+    {
+        workerPool.execute(() -> {
+
+            if (username == null || username.isEmpty())
+            {
+                asyncResponse.resume(Response.status(Response.Status.BAD_REQUEST).build());
+                return;
+            }
+
+            ShareApi shareApi = null; // TODO: Link with impl
+            List<DocumentSummary> documents = shareApi.getSharedDocuments(username);
+            asyncResponse.resume(buildSuccessJsonResponse(documents));
         });
     }
 

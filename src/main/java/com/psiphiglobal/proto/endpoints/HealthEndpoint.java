@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,9 +21,14 @@ public class HealthEndpoint extends AbstractEndpoint
     {
         workerPool.execute(() -> {
             Node node = blockchainApiManager.getNodeApi().getInfo();
-            Map<String, Object> response = new HashMap<>();
-            response.put("node_info", node);
-            asyncResponse.resume(buildSuccessJsonResponse(response));
+            if (node != null)
+            {
+                asyncResponse.resume(buildSuccessJsonResponse(node));
+            }
+            else
+            {
+                asyncResponse.resume(Response.status(Response.Status.SERVICE_UNAVAILABLE).build());
+            }
         });
     }
 }
