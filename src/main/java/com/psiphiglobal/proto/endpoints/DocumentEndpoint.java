@@ -81,8 +81,7 @@ public class DocumentEndpoint extends AbstractEndpoint
                 return;
             }
 
-            ShareApi shareApi = null; // TODO: Link with impl
-            List<DocumentSummary> documents = shareApi.getSharedDocuments(username);
+            List<DocumentSummary> documents = blockchainApiManager.getShareApi().getSharedDocuments(username);
             asyncResponse.resume(buildSuccessJsonResponse(documents));
         });
     }

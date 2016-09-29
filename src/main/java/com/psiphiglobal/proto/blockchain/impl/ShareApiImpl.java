@@ -16,11 +16,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by harsh on 29/09/16.
- */
-public class ShareApiImpl implements ShareApi {
-
+public class ShareApiImpl implements ShareApi
+{
     private static Logger LOG = LogManager.getLogger();
 
     public static final String STREAM_SHARED_DOCUMENTS = "shared_documents";
@@ -32,10 +29,9 @@ public class ShareApiImpl implements ShareApi {
         this.jsonRpcClient = jsonRpcClient;
     }
 
-
     @Override
-    public void share(String username, DocumentSummary documentSummary) {
-
+    public void share(String username, DocumentSummary documentSummary)
+    {
         try
         {
             PublishToStreamResponse response = PublishToStreamResponse.parse(jsonRpcClient.sendRequest(new PublishToStreamRequest(STREAM_SHARED_DOCUMENTS, username, DocumentHelper.serialize(documentSummary))));
@@ -53,7 +49,8 @@ public class ShareApiImpl implements ShareApi {
     }
 
     @Override
-    public List<DocumentSummary> getSharedDocuments(String username) {
+    public List<DocumentSummary> getSharedDocuments(String username)
+    {
         try
         {
             RetrieveFromStreamResponse response = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest(STREAM_SHARED_DOCUMENTS, username)));

@@ -50,7 +50,7 @@ public class ShareEndpoint extends AbstractEndpoint
 
             String to = input.get("to");
             String documentId = input.get("document_id");
-            String encryptedKey = input.get("encryptedKey");
+            String encryptedKey = input.get("encrypted_key");
             String signature = input.get("signature");
 
             if (to == null || to.isEmpty() || documentId == null || documentId.isEmpty() || encryptedKey == null || encryptedKey.isEmpty())
@@ -61,7 +61,7 @@ public class ShareEndpoint extends AbstractEndpoint
 
             UserApi userApi = blockchainApiManager.getUserApi();
             DocumentApi documentApi = blockchainApiManager.getDocumentApi();
-            ShareApi shareApi = null; // TODO: Link with impl
+            ShareApi shareApi = blockchainApiManager.getShareApi();
 
             Document document = documentApi.get(documentId);
             if (document == null)

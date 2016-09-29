@@ -3,6 +3,7 @@ package com.psiphiglobal.proto.blockchain.api;
 import com.psiphiglobal.proto._core.Constants;
 import com.psiphiglobal.proto.blockchain.impl.DocumentApiImpl;
 import com.psiphiglobal.proto.blockchain.impl.NodeApiImpl;
+import com.psiphiglobal.proto.blockchain.impl.ShareApiImpl;
 import com.psiphiglobal.proto.blockchain.impl.UserApiImpl;
 import com.psiphiglobal.proto.blockchain.impl._core.JsonRpcClient;
 import com.psiphiglobal.proto.util.GsonProvider;
@@ -25,6 +26,7 @@ public class BlockchainApiManager
     private NodeApi nodeApi;
     private UserApi userApi;
     private DocumentApi documentApi;
+    private ShareApi shareApi;
 
     private BlockchainApiManager()
     {
@@ -41,9 +43,10 @@ public class BlockchainApiManager
         return nodeApi;
     }
 
-    public UserApi getUserApi() {
+    public UserApi getUserApi()
+    {
 
-        if(userApi == null)
+        if (userApi == null)
         {
             userApi = new UserApiImpl(JsonRpcClient.getInstance());
         }
@@ -51,13 +54,24 @@ public class BlockchainApiManager
         return userApi;
     }
 
-    public DocumentApi getDocumentApi() {
+    public DocumentApi getDocumentApi()
+    {
 
-        if(documentApi == null)
+        if (documentApi == null)
         {
             documentApi = new DocumentApiImpl(JsonRpcClient.getInstance());
         }
 
         return documentApi;
+    }
+
+    public ShareApi getShareApi()
+    {
+        if (shareApi == null)
+        {
+            shareApi = new ShareApiImpl(JsonRpcClient.getInstance());
+        }
+
+        return shareApi;
     }
 }

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Main
+public class TestHarness
 {
     private static JsonRpcClient jsonRpcClient;
 
@@ -96,7 +96,9 @@ public class Main
             if (response.getResults().size() == 0)
             {
                 System.out.printf("No such User");
-            }else{
+            }
+            else
+            {
                 System.out.println(UserHelper.deserialize(response.getResult(0).getData()));
             }
 
