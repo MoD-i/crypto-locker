@@ -63,6 +63,7 @@ public final class DocumentHelper
         DocumentSummary summary = new DocumentSummary();
         summary.setId(document.getId());
         summary.setName(document.getName());
+        summary.setCreator(document.getCreator());
         summary.setEncryptedKey(document.getEncryptedKey());
         summary.setCreatedAt(document.getCreatedAt());
         return summary;
