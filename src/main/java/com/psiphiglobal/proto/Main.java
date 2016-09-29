@@ -1,5 +1,19 @@
 package com.psiphiglobal.proto;
 
+import com.psiphiglobal.proto._core.Constants;
+import com.psiphiglobal.proto.blockchain.impl._core.JsonRpcClient;
+import com.psiphiglobal.proto.blockchain.impl._core.JsonRpcException;
+import com.psiphiglobal.proto.blockchain.impl.request.PublishToStreamRequest;
+import com.psiphiglobal.proto.blockchain.impl.request.RetrieveFromStreamRequest;
+import com.psiphiglobal.proto.blockchain.impl.response.PublishToStreamResponse;
+import com.psiphiglobal.proto.blockchain.impl.response.RetrieveFromStreamResponse;
+import com.psiphiglobal.proto.exception.UnknownException;
+import com.psiphiglobal.proto.model.Document;
+import com.psiphiglobal.proto.model.DocumentSummary;
+import com.psiphiglobal.proto.model.User;
+import com.psiphiglobal.proto.model.helper.DocumentHelper;
+import com.psiphiglobal.proto.model.helper.UserHelper;
+import com.psiphiglobal.proto.util.GsonProvider;
 import com.psiphiglobal.proto.util.crypto.AsymmetricCryptoUtil;
 import com.psiphiglobal.proto.util.crypto.SymmetricCryptoUtil;
 import org.apache.commons.codec.binary.Base64;
@@ -7,12 +21,25 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class Main
 {
-    public static void main(String[] args) throws Exception
+    private static JsonRpcClient jsonRpcClient;
+
+    public static void main(String[] args)
     {
-        File file = new File("/Users/aditya/bitcoin.pdf");
+        JsonRpcClient.init(GsonProvider.get(), Constants.BLOCKCHAIN_RPC_URL, Constants.BLOCKCHAIN_RPC_USERNAME, Constants.BLOCKCHAIN_RPC_PASSWORD);
+        jsonRpcClient = JsonRpcClient.getInstance();
+
+        getSharedDocuments(jsonRpcClient);
+    }
+
+    private static void oldmethod() throws Exception
+    {
+        File file = new File("/Users/harsh/Downloads/bitcoin.pdf");
         byte[] contents = IOUtils.toByteArray(new FileInputStream(file));
         System.out.println("File Size : " + contents.length);
 
@@ -35,4 +62,172 @@ public class Main
         byte[] signature = AsymmetricCryptoUtil.sign(Base64.decodeBase64(privateKey), rawBytes);
         System.out.println("\nSignature\n" + Base64.encodeBase64String(signature));
     }
+
+    private static void registerUser(JsonRpcClient jsonRpcClient)
+    {
+        User user = new User();
+        user.setCreatedAt(System.currentTimeMillis());
+        user.setEmail("harsh.81291@gmail.com");
+        user.setMetadata(new HashMap<>());
+        user.setName("Harsh");
+        user.setPublicKey("Public Key Harsh");
+        user.setSignature("Signature Harsh");
+        user.setUsername("harshp");
+
+        try
+        {
+            PublishToStreamResponse response = PublishToStreamResponse.parse(jsonRpcClient.sendRequest(new PublishToStreamRequest("users", user.getUsername(), UserHelper.serialize(user))));
+        }
+        catch (JsonRpcException e)
+        {
+            throw new UnknownException();
+        }
+        catch (Exception e)
+        {
+            throw new UnknownException();
+        }
+    }
+
+    private static void getUser(JsonRpcClient jsonRpcClient)
+    {
+        try
+        {
+            RetrieveFromStreamResponse response = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest("users", "harsh")));
+            if (response.getResults().size() == 0)
+            {
+                System.out.printf("No such User");
+            }else{
+                System.out.println(UserHelper.deserialize(response.getResult(0).getData()));
+            }
+
+        }
+        catch (JsonRpcException e)
+        {
+            throw new UnknownException();
+        }
+        catch (Exception e)
+        {
+            throw new UnknownException();
+        }
+    }
+
+    private static void createDocument(JsonRpcClient jsonRpcClient)
+    {
+        Document document = new Document();
+        document.setCreatedAt(System.currentTimeMillis());
+        document.setCreator("harshp");
+        document.setEncryptedContent("Encrypted Document 2");
+        document.setEncryptedKey("Encryped key for Document 2");
+        document.setId("2");
+        document.setName("Document 2");
+        document.setSignature("Signature 1");
+
+        try
+        {
+            PublishToStreamResponse publishToStreamResponse = PublishToStreamResponse.parse(jsonRpcClient.sendRequest(new PublishToStreamRequest("documents", document.getId(), DocumentHelper.serialize(document))));
+
+            DocumentSummary documentSummary = DocumentHelper.summarize(document);
+            PublishToStreamResponse response = PublishToStreamResponse.parse(jsonRpcClient.sendRequest(new PublishToStreamRequest("user_documents", document.getCreator(), DocumentHelper.serialize(documentSummary))));
+        }
+        catch (JsonRpcException e)
+        {
+            throw new UnknownException();
+        }
+        catch (Exception e)
+        {
+            throw new UnknownException();
+        }
+    }
+
+    private static void getDocument(JsonRpcClient jsonRpcClient)
+    {
+        try
+        {
+            RetrieveFromStreamResponse response = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest("documents", "3")));
+            if (response.getResults().size() == 0)
+            {
+                System.out.println("No such Document");
+            }
+        }
+        catch (JsonRpcException e)
+        {
+            throw new UnknownException();
+        }
+        catch (Exception e)
+        {
+            throw new UnknownException();
+        }
+    }
+
+    private static void getAllDocumentSummaries(JsonRpcClient jsonRpcClient)
+    {
+        try
+        {
+            RetrieveFromStreamResponse response = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest("user_documents", "harsh")));
+
+            List<DocumentSummary> documentSummaryList = new ArrayList<>();
+            for (RetrieveFromStreamResponse.Result result : response.getResults())
+            {
+                documentSummaryList.add(DocumentHelper.deserializeDocumentSummary(result.getData()));
+            }
+
+            System.out.println(documentSummaryList.size());
+        }
+        catch (JsonRpcException e)
+        {
+            throw new UnknownException();
+        }
+        catch (Exception e)
+        {
+            throw new UnknownException();
+        }
+    }
+
+    private static void shareDocument(JsonRpcClient jsonRpcClient)
+    {
+        DocumentSummary documentSummary = new DocumentSummary();
+        documentSummary.setCreatedAt(System.currentTimeMillis());
+        documentSummary.setCreator("harshp");
+        documentSummary.setEncryptedKey("Symmetric Key encrypted with Aditya's Public Key");
+        documentSummary.setId("2");
+        documentSummary.setName("Document 2");
+
+        try
+        {
+            PublishToStreamResponse response = PublishToStreamResponse.parse(jsonRpcClient.sendRequest(new PublishToStreamRequest("shared_documents", "aditya", DocumentHelper.serialize(documentSummary))));
+        }
+        catch (JsonRpcException e)
+        {
+            throw new UnknownException();
+        }
+        catch (Exception e)
+        {
+            throw new UnknownException();
+        }
+    }
+
+    private static void getSharedDocuments(JsonRpcClient jsonRpcClient)
+    {
+        try
+        {
+            RetrieveFromStreamResponse response = RetrieveFromStreamResponse.parse(jsonRpcClient.sendRequest(new RetrieveFromStreamRequest("shared_documents", "harshp")));
+
+            List<DocumentSummary> documentSummaryList = new ArrayList<>();
+            for (RetrieveFromStreamResponse.Result result : response.getResults())
+            {
+                documentSummaryList.add(DocumentHelper.deserializeDocumentSummary(result.getData()));
+            }
+
+            System.out.println(documentSummaryList.size());
+        }
+        catch (JsonRpcException e)
+        {
+            throw new UnknownException();
+        }
+        catch (Exception e)
+        {
+            throw new UnknownException();
+        }
+    }
+
 }
