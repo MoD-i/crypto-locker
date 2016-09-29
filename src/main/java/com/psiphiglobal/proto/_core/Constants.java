@@ -10,12 +10,12 @@ public final class Constants
     public static final int PORT = 7070;
 
     /* Blockchain Node */
-    public static final String BLOCKCHAIN_RPC_URL = "http://54.71.117.175:2880/";
+    public static final String BLOCKCHAIN_RPC_URL = "http://54.71.117.175:4798/";
     public static final String BLOCKCHAIN_RPC_USERNAME = "multichainrpc";
-    public static final String BLOCKCHAIN_RPC_PASSWORD = "BJydUxp8gWv1fvzgmpaF3G2qW9eAZnMiryknak8E9nVj";
+    public static final String BLOCKCHAIN_RPC_PASSWORD = "9f6LGez2SnVvw1TbSoNEdnCcvNBqssxAUee3vefpSY2a";
 
     /* Chain */
-    public static final String CHAIN_NAME = "testchain";
+    public static final String CHAIN_NAME = "dummychain";
     public static final long DOCUMENT_SIZE_LIMIT = 3 * 1024 * 1024; // in bytes
 
     private Constants()

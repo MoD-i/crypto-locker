@@ -94,6 +94,6 @@ public class JsonRpcClient
 
     private static String getAuthorizationHeader(String username, String password)
     {
-        return "Basic bXVsdGljaGFpbnJwYzpCSnlkVXhwOGdXdjFmdnpnbXBhRjNHMnFXOWVBWm5NaXJ5a25hazhFOW5Wag==";
+        return "Basic bXVsdGljaGFpbnJwYzo5ZjZMR2V6MlNuVnZ3MVRiU29ORWRuQ2N2TkJxc3N4QVVlZTN2ZWZwU1kyYQ==";
     }
 }
