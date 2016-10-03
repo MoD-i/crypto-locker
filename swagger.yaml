@@ -211,7 +211,7 @@ definitions:
         description: User's public key
       signature:
         type: string
-        description: User's ECDSA signature
+        description: User info signed with the user's private key
       created_at:
         type: integer
         description: User's registration timestamp
@@ -238,7 +238,7 @@ definitions:
         description: User's public key
       signature:
         type: string
-        description: User's ECDSA signature
+        description: User info signed with the user's private key
   Node:
     type: object
     properties:
@@ -288,7 +288,7 @@ definitions:
         description: Symmetric Key for decrypting document which in turn is encrypted by creator's public key
       signature:
         type: string
-        description: ECDSA signature of document's creator
+        description: Document info signed with the creator's private key
       created_at:
         type: integer
         description: Document creation timestamp
@@ -315,7 +315,7 @@ definitions:
         description: Symmetric Key for decrypting document which in turn is encrypted by creator's public key
       signature:
         type: string
-        description: ECDSA signature of document's creator
+        description: Document info signed with the creator's private key
   DocumentSummary:
     type: object
     required:
@@ -359,4 +359,4 @@ definitions:
         description: Symmetric Key for decrypting document which in turn is encrypted by receiver's public key
       signature:
         type: string
-        description: ECDSA signature of document's creator
+        description: Share info signed with the creator's private key
