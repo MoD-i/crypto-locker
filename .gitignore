@@ -16,3 +16,6 @@ target/
 
 ## OS specific files
 .DS_Store
+
+## PDF
+*.pdf
